@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>3D Vendor Supplies</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f1f5f9;color:#0F172A}
+:root{--navy:#0F172A;--blue:#2563EB;--gray:#334155;--light:#CBD5E1;--white:#FFFFFF}
+
+/* PAGE SYSTEM */
+.page{display:none}
+.page.active{display:block}
+
+nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100}
+.logo-wrap{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-img{height:48px;width:auto;object-fit:contain;filter:brightness(0) invert(1)}
+.logo-fallback{display:flex;align-items:center;gap:10px}
+.logo-hex{width:38px;height:38px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-hex svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.brand-name{font-family:'Orbitron',sans-serif;font-size:13px;color:#fff;line-height:1.25}
+.brand-name span{color:var(--blue)}
+.brand-tag{font-size:9px;color:var(--light);letter-spacing:1px;margin-top:1px}
+.nav-links{display:flex;gap:26px}
+.nav-links a{font-size:13px;color:var(--light);text-decoration:none;cursor:pointer}
+.nav-links a:hover{color:#fff}
+.cart-btn{display:flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(255,255,255,0.2);padding:8px 16px;border-radius:8px;cursor:pointer;color:#fff;font-size:13px;font-family:'Inter',sans-serif}
+.cart-btn:hover{border-color:var(--blue)}
+.cart-badge{background:var(--blue);color:#fff;font-size:11px;border-radius:999px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+.hero{background:var(--navy);padding:64px 32px 56px;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:600;text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-family:'Orbitron',sans-serif;font-size:34px;color:#fff;line-height:1.2;margin-bottom:12px}
+.hero h1 span{color:var(--blue)}
+.hero-desc{font-size:15px;color:var(--light);max-width:460px;margin:0 auto 32px;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center}
+.btn-primary{background:var(--blue);color:#fff;border:none;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-primary:hover{background:#1d4ed8}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.25);padding:13px 28px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+
+.trust-bar{background:#1e293b;padding:12px 32px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.trust-item{font-size:12px;color:var(--light);font-weight:500;display:flex;align-items:center;gap:6px}
+.trust-item b{color:var(--blue)}
+
+.section{padding:48px 32px;max-width:1060px;margin:0 auto}
+.sec-eyebrow{display:inline-block;background:#eff6ff;color:var(--blue);font-size:11px;font-weight:600;padding:4px 12px;border-radius:999px;letter-spacing:0.5px;margin-bottom:10px}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:18px;color:var(--navy);margin-bottom:6px}
+.sec-title span{color:var(--blue)}
+.sec-sub{font-size:13px;color:var(--gray);margin-bottom:28px}
+
+.product-hero{background:var(--white);border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:0}
+.product-photo{background:linear-gradient(135deg,#dbeafe,#eff6ff);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;min-height:320px}
+.photo-placeholder{width:180px;height:180px;background:#e0eaff;border:2px dashed #93c5fd;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.photo-placeholder span{font-size:36px}
+.photo-placeholder p{font-size:11px;color:#3b82f6;font-weight:600;text-align:center;line-height:1.4}
+.product-details{padding:36px 32px;display:flex;flex-direction:column;justify-content:center}
+.product-title{font-family:'Orbitron',sans-serif;font-size:20px;color:var(--navy);margin-bottom:8px}
+.product-title span{color:var(--blue)}
+.product-desc{font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:24px}
+.tier-label{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.tier-card{border:1.5px solid #e2e8f0;border-radius:10px;padding:14px 12px;cursor:pointer;transition:all 0.15s;text-align:center;position:relative;background:var(--white)}
+.tier-card:hover{border-color:var(--blue)}
+.tier-card.selected{border-color:var(--blue);background:#eff6ff}
+.tier-card.popular::before{content:'Best value';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.tier-qty{font-family:'Orbitron',sans-serif;font-size:22px;color:var(--navy);font-weight:700}
+.tier-unit{font-size:11px;color:var(--gray);margin:2px 0}
+.tier-price{font-size:15px;font-weight:700;color:var(--blue)}
+.tier-per{font-size:10px;color:#94a3b8}
+.add-to-cart-btn{width:100%;background:var(--blue);color:#fff;border:none;padding:14px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.add-to-cart-btn:hover{background:#1d4ed8}
+
+.cart-wrap{background:var(--white);border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:1060px;margin:0 auto}
+.cart-empty{text-align:center;padding:28px;font-size:13px;color:var(--gray)}
+.cart-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.qty-ctrl{display:flex;align-items:center;gap:8px}
+.qty-btn{width:26px;height:26px;border:1px solid #e2e8f0;background:none;border-radius:5px;cursor:pointer;font-size:15px;color:var(--navy);display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{border-color:var(--blue)}
+.rm-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:20px;margin-left:auto;padding:0 4px}
+.cart-total-row{display:flex;justify-content:space-between;padding:14px 0 0;font-size:15px;font-weight:700;color:var(--navy)}
+.checkout-btn{width:100%;margin-top:14px;background:var(--blue);color:#fff;border:none;padding:14px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.checkout-btn:hover{background:#1d4ed8}
+
+.contact-wrap{background:var(--white);border:1px solid #e2e8f0;border-radius:14px;padding:28px;max-width:1060px;margin:0 auto}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.f label{display:block;font-size:11px;font-weight:700;color:var(--gray);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.f input,.f textarea,.f select{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;color:var(--navy);background:#f8fafc}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--blue)}
+.f textarea{height:100px;resize:vertical}
+.sub-btn{background:var(--navy);color:#fff;border:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.sub-btn:hover{background:#1e293b}
+.sub-ok{font-size:12px;color:#16a34a;margin-top:10px;display:none;font-weight:600}
+
+/* POLICY PAGE */
+.policy-page{padding:48px 32px;max-width:760px;margin:0 auto}
+.policy-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--blue);cursor:pointer;margin-bottom:28px;font-weight:600}
+.policy-back:hover{opacity:0.8}
+.policy-title{font-family:'Orbitron',sans-serif;font-size:22px;color:var(--navy);margin-bottom:6px}
+.policy-title span{color:var(--blue)}
+.policy-date{font-size:12px;color:var(--gray);margin-bottom:28px}
+.policy-card{background:var(--white);border:1px solid #e2e8f0;border-radius:14px;padding:32px}
+.policy-card h2{font-size:14px;font-weight:700;color:var(--navy);margin:20px 0 8px}
+.policy-card h2:first-child{margin-top:0}
+.policy-card p{font-size:13px;color:var(--gray);line-height:1.8;margin-bottom:10px}
+.policy-card ul{font-size:13px;color:var(--gray);line-height:2;margin-left:20px;margin-bottom:10px}
+
+footer{background:var(--navy);padding:28px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.f-brand{font-family:'Orbitron',sans-serif;font-size:13px;color:#fff}
+.f-brand span{color:var(--blue)}
+.f-sub{font-size:10px;color:#64748b;margin-top:3px}
+.f-links{display:flex;gap:20px}
+.f-links a{font-size:12px;color:var(--light);text-decoration:none;cursor:pointer}
+.f-links a:hover{color:#fff}
+.f-copy{font-size:11px;color:#475569}
+.divider{height:1px;background:#e2e8f0;margin:0 32px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo-wrap" onclick="showPage('main');goto('top')">
+    <img src="https://3dvendorsupplies.netlify.app/logo.png" alt="3D Vendor Supplies" class="logo-img"
+      onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'"/>
+    <div id="logo-fallback" style="display:none;align-items:center;gap:10px">
+      <div class="logo-hex"><svg viewBox="0 0 24 24"><polygon points="12,2 22,7 22,17 12,22 2,17 2,7"/></svg></div>
+      <div><div class="brand-name">3D VENDOR <span>SUPPLIES</span></div><div class="brand-tag">SUPPLIES THAT BUILD POSSIBILITIES</div></div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('main');goto('shop')">Shop</a>
+    <a onclick="showPage('main');goto('cart-sec')">Cart</a>
+    <a onclick="showPage('main');goto('contact-sec')">Contact</a>
+  </div>
+  <button class="cart-btn" onclick="showPage('main');goto('cart-sec')">
+    🛒 Cart <span class="cart-badge" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- MAIN PAGE -->
+<div class="page active" id="page-main">
+  <div id="top"></div>
+  <div class="hero">
+    <p class="eyebrow">3D Printed Pokémon Vendor Supplies</p>
+    <h1>SUPPLIES THAT <span>BUILD</span><br>POSSIBILITIES.</h1>
+    <p class="hero-desc">High quality 3D printed vendor supplies for Pokémon sellers and collectors. Trusted products. Consistent results. Print with confidence.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="goto('shop')">Shop Now →</button>
+      <button class="btn-outline" onclick="goto('contact-sec')">Custom Order</button>
+    </div>
+  </div>
+
+  <div class="trust-bar">
+    <div class="trust-item"><b>✓</b> Made to order</div>
+    <div class="trust-item"><b>✓</b> Bulk packages &amp; discounts</div>
+    <div class="trust-item"><b>✓</b> Made for Pokémon vendors</div>
+  </div>
+
+  <div class="section" id="shop">
+    <span class="sec-eyebrow">Our Product</span>
+    <p class="sec-title">DISPLAY CARD <span>RISERS</span></p>
+    <p class="sec-sub">Choose your package — all risers are custom 3D printed to order.</p>
+    <div class="product-hero">
+      <div class="product-photo" style="padding:0;position:relative;background:#111">
+        <img id="main-photo" src="https://3dvendorsupplies.netlify.app/photo3.jpg" alt="Display Card Risers" style="width:100%;height:100%;object-fit:cover;min-height:320px;display:block"/>
+        <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px">
+          <img onclick="setPhoto(this)" src="https://3dvendorsupplies.netlify.app/photo3.jpg" style="width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid #fff;opacity:1"/>
+          <img onclick="setPhoto(this)" src="https://3dvendorsupplies.netlify.app/photo1.jpg" style="width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,0.4);opacity:0.7"/>
+          <img onclick="setPhoto(this)" src="https://3dvendorsupplies.netlify.app/photo4.jpg" style="width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,0.4);opacity:0.7"/>
+          <img onclick="setPhoto(this)" src="https://3dvendorsupplies.netlify.app/photo2.jpg" style="width:52px;height:52px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,0.4);opacity:0.7"/>
+        </div>
+      </div>
+      <div class="product-details">
+        <p class="product-title">DISPLAY CARD <span>RISERS</span></p>
+        <p class="product-desc">Custom 3D printed card risers designed to elevate and display your Pokémon cards at vendor events. Sturdy, stackable, and available in any color. Perfect for table displays.</p>
+        <p class="tier-label">Select your package</p>
+        <div class="tier-grid" id="tier-grid"></div>
+        <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section" id="cart-sec" style="padding-bottom:8px">
+    <span class="sec-eyebrow">Review Order</span>
+    <p class="sec-title">YOUR <span>CART</span></p>
+  </div>
+  <div style="padding:0 32px;max-width:1060px;margin:0 auto 8px">
+    <div class="cart-wrap">
+      <div id="cart-items"><div class="cart-empty">Your cart is empty — select a package above!</div></div>
+      <div id="cart-summary" style="display:none">
+        <div class="cart-total-row"><span>Total</span><span id="cart-total">$0.00</span></div>
+        <button class="checkout-btn" onclick="stripeCheckout()">Proceed to Checkout →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="contact-sec" style="padding-bottom:8px;margin-top:8px">
+    <span class="sec-eyebrow">Get in Touch</span>
+    <p class="sec-title">CONTACT / <span>CUSTOM ORDER</span></p>
+    <p class="sec-sub">Want a custom color, bulk quote, or have a question? Reach out below.</p>
+  </div>
+  <div style="padding:0 32px;max-width:1060px;margin:0 auto 48px">
+    <div class="contact-wrap">
+      <form name="contact" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="contact"/>
+      <div class="form-2col">
+        <div class="f"><label>Name</label><input type="text" name="name" placeholder="Your name"/></div>
+        <div class="f"><label>Email</label><input type="email" name="email" placeholder="you@email.com"/></div>
+      </div>
+      <div class="form-2col">
+        <div class="f"><label>Subject</label>
+          <select name="subject"><option>General inquiry</option><option>Custom color request</option><option>Bulk pricing</option><option>Order issue</option></select>
+        </div>
+        <div class="f"><label>Quantity needed</label><input type="text" name="quantity" placeholder="e.g. 20 risers"/></div>
+      </div>
+      <div class="f" style="margin-bottom:16px"><label>Message</label><textarea name="message" placeholder="Describe what you need — colors, quantities, event date..."></textarea></div>
+      <button type="submit" class="sub-btn">Send Message ✓</button>
+      <p class="sub-ok" id="sub-ok">✓ Message sent! We'll get back to you within 24 hours.</p>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div>
+      <div class="f-brand">3D VENDOR <span>SUPPLIES</span></div>
+      <div class="f-sub">Supplies that build possibilities.</div>
+    </div>
+    <div class="f-links">
+      <a onclick="showPage('main');goto('shop')">Shop</a>
+      <a onclick="showPage('main');goto('contact-sec')">Contact</a>
+      <a onclick="showPage('refund')">Refund Policy</a>
+      <a onclick="showPage('privacy')">Privacy Policy</a>
+    </div>
+    <div class="f-copy">&copy; 2026 3D Vendor Supplies</div>
+  </footer>
+</div>
+
+<!-- REFUND POLICY PAGE -->
+<div class="page" id="page-refund">
+  <div class="policy-page">
+    <div class="policy-back" onclick="showPage('main')">← Back to store</div>
+    <p class="policy-title">REFUND <span>POLICY</span></p>
+    <p class="policy-date">Last updated: June 2026</p>
+    <div class="policy-card">
+      <p>All products sold by <strong>3D Vendor Supplies</strong> are custom-made to order. Because each item is produced specifically for you, <strong>we do not accept returns or issue refunds</strong> except in the circumstances described below.</p>
+      <h2>Eligible Refund Situations</h2>
+      <p><strong>1. Item damaged in transit</strong> — If your order arrives visibly damaged, you may request a refund or replacement. You must contact us within <strong>7 days of the delivery date</strong> and provide clear photographic evidence of the damage, including photos of the item and the original packaging.</p>
+      <p><strong>2. Item lost in transit</strong> — If your package is confirmed lost by the carrier (tracking shows no movement for 15+ business days after the expected delivery date), you may request a refund or replacement at no additional charge.</p>
+      <h2>How to Submit a Claim</h2>
+      <p>Contact us through the contact form on this site within the applicable window. Include your order details and, for damage claims, attach clear photos as proof. We will respond within 3 business days. Approved refunds will be issued to your original payment method within 5–10 business days.</p>
+      <h2>Non-Refundable Situations</h2>
+      <p>We are unable to issue refunds for:</p>
+      <ul>
+        <li>Change of mind or accidental orders</li>
+        <li>Incorrect shipping addresses provided by the customer</li>
+        <li>Carrier delays outside our control</li>
+        <li>Minor color variations due to screen display or filament batch differences</li>
+        <li>Claims submitted more than 7 days after delivery</li>
+      </ul>
+      <h2>Note</h2>
+      <p>All items are made to order. Please review your order carefully before submitting. If you have questions before purchasing, reach out via our contact form — we're happy to help.</p>
+    </div>
+  </div>
+  <footer>
+    <div><div class="f-brand">3D VENDOR <span>SUPPLIES</span></div><div class="f-sub">Supplies that build possibilities.</div></div>
+    <div class="f-links">
+      <a onclick="showPage('main');goto('shop')">Shop</a>
+      <a onclick="showPage('main');goto('contact-sec')">Contact</a>
+      <a onclick="showPage('refund')">Refund Policy</a>
+      <a onclick="showPage('privacy')">Privacy Policy</a>
+    </div>
+    <div class="f-copy">&copy; 2026 3D Vendor Supplies</div>
+  </footer>
+</div>
+
+<!-- PRIVACY POLICY PAGE -->
+<div class="page" id="page-privacy">
+  <div class="policy-page">
+    <div class="policy-back" onclick="showPage('main')">← Back to store</div>
+    <p class="policy-title">PRIVACY <span>POLICY</span></p>
+    <p class="policy-date">Last updated: June 2026</p>
+    <div class="policy-card">
+      <p>3D Vendor Supplies ("we," "us," or "our") is committed to protecting your personal information. This policy explains what data we collect, how we use it, and your rights.</p>
+      <h2>Information We Collect</h2>
+      <ul>
+        <li><strong>Contact information</strong> — name and email address when you submit our contact or order form</li>
+        <li><strong>Order information</strong> — items ordered and quantities</li>
+        <li><strong>Payment information</strong> — processed securely by a third-party processor (e.g. Stripe). We do not store your card details</li>
+        <li><strong>Shipping information</strong> — your mailing address, used solely to fulfill your order</li>
+      </ul>
+      <h2>How We Use Your Information</h2>
+      <ul>
+        <li>To process and fulfill your order</li>
+        <li>To communicate with you about your order or inquiry</li>
+        <li>To improve our products and customer experience</li>
+      </ul>
+      <h2>How We Share Your Information</h2>
+      <p>We do not sell, rent, or trade your personal information to third parties. We share data only with service providers necessary to operate our business (such as shipping carriers and payment processors), and only to the extent required to fulfill your order.</p>
+      <h2>Data Retention</h2>
+      <p>We retain your information only as long as necessary to fulfill your order and comply with applicable legal obligations. You may request deletion of your data at any time by contacting us.</p>
+      <h2>Your Rights</h2>
+      <p>You have the right to request access to, correction of, or deletion of your personal data. To exercise these rights, contact us through the form on this site.</p>
+      <h2>Contact</h2>
+      <p>If you have questions about this privacy policy, please reach out via the contact form on this site.</p>
+    </div>
+  </div>
+  <footer>
+    <div><div class="f-brand">3D VENDOR <span>SUPPLIES</span></div><div class="f-sub">Supplies that build possibilities.</div></div>
+    <div class="f-links">
+      <a onclick="showPage('main');goto('shop')">Shop</a>
+      <a onclick="showPage('main');goto('contact-sec')">Contact</a>
+      <a onclick="showPage('refund')">Refund Policy</a>
+      <a onclick="showPage('privacy')">Privacy Policy</a>
+    </div>
+    <div class="f-copy">&copy; 2026 3D Vendor Supplies</div>
+  </footer>
+</div>
+
+<script>
+const STRIPE_LINKS={
+  1:'https://buy.stripe.com/bJe9AUdTK4ir5n261M8N204',
+  2:'https://buy.stripe.com/dRmaEYcPGeX5cPu2PA8N203',
+  3:'https://buy.stripe.com/28E4gA8zq16feXC9dY8N202',
+  4:'https://buy.stripe.com/aFa3cw8zqdT14iY3TE8N201',
+};
+const STRIPE_KEY='pk_live_51TfILkIGZMTFGeigyCQqyMRoGE10H5owIaBDWVCsWjsceXJ77GCcu3whuldqcLpctp6q2wrUvfmdLHFaBpAacZt200WFYO7SSj';
+const tiers=[
+  {id:1,qty:1,price:6.99,popular:false,priceId:'price_1TfJMgIGZMTFGeigECH6qyow'},
+  {id:2,qty:4,price:27.99,popular:false,priceId:'price_1TfJOLIGZMTFGeigSwpWGYyj'},
+  {id:3,qty:8,price:54.99,popular:true,priceId:'price_1TfJPPIGZMTFGeigMw67W1xH'},
+  {id:4,qty:16,price:99.99,label:"Mega Package",popular:false,priceId:'price_1TfJQbIGZMTFGeigi2u6VkDu'},
+];
+let selected=1;
+let cart={};
+
+async function stripeCheckout(){
+  const keys=Object.keys(cart);
+  if(!keys.length)return;
+  // Find the highest tier in cart and send to that payment link
+  const tierIds=keys.map(k=>cart[k].tier.id);
+  const highestTier=Math.max(...tierIds);
+  window.location.href=STRIPE_LINKS[highestTier];
+}
+
+function setPhoto(el){
+  document.getElementById('main-photo').src=el.src;
+  document.querySelectorAll('.product-photo img[onclick]').forEach(t=>{
+    t.style.border='2px solid rgba(255,255,255,0.4)';
+    t.style.opacity='0.7';
+  });
+  el.style.border='2px solid #fff';
+  el.style.opacity='1';
+}
+
+function perUnit(t){return (t.price/t.qty).toFixed(2);}
+
+function renderTiers(){
+  document.getElementById('tier-grid').innerHTML=tiers.map(t=>`
+    <div class="tier-card${t.popular?' popular':''}${selected===t.id?' selected':''}" onclick="selectTier(${t.id})">
+      <div class="tier-qty">${t.qty}</div>
+      <div class="tier-unit">${t.id===4?'Mega Package':t.qty===1?'riser':'risers'}</div>
+      <div class="tier-price">$${t.price.toFixed(2)}</div>
+      <div class="tier-per">$${perUnit(t)} each</div>
+    </div>
+  `).join('');
+}
+
+function selectTier(id){selected=id;renderTiers();}
+
+function addToCart(){
+  const t=tiers.find(x=>x.id===selected);
+  const key='tier_'+t.id;
+  if(!cart[key])cart[key]={tier:t,qty:0};
+  cart[key].qty++;
+  renderCart();
+  goto('cart-sec');
+}
+
+function removeFromCart(key){delete cart[key];renderCart();}
+function changeQty(key,d){
+  if(!cart[key])return;
+  cart[key].qty+=d;
+  if(cart[key].qty<=0)delete cart[key];
+  renderCart();
+}
+
+function renderCart(){
+  const keys=Object.keys(cart);
+  const count=keys.reduce((a,k)=>a+cart[k].qty,0);
+  document.getElementById('cart-count').textContent=count;
+  const el=document.getElementById('cart-items');
+  const summary=document.getElementById('cart-summary');
+  if(!keys.length){
+    el.innerHTML='<div class="cart-empty">Your cart is empty — select a package above!</div>';
+    summary.style.display='none';return;
+  }
+  let total=0;
+  el.innerHTML=keys.map(k=>{
+    const {tier,qty}=cart[k];
+    const sub=tier.price*qty;total+=sub;
+    const label=tier.id===4?'Mega Package (16)':tier.qty===1?'1 Riser':tier.qty+' Risers';
+    return `<div class="cart-row">
+      <span style="font-size:22px">🃏</span>
+      <div style="flex:1"><p style="font-weight:600;font-size:13px">Display Card Risers — ${label}</p><p style="font-size:11px;color:#64748b">$${tier.price.toFixed(2)} per pack</p></div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty('${k}',-1)">−</button>
+        <span style="font-size:13px;font-weight:600;min-width:18px;text-align:center">${qty}</span>
+        <button class="qty-btn" onclick="changeQty('${k}',1)">+</button>
+      </div>
+      <span style="min-width:64px;text-align:right;font-weight:700;font-size:14px;color:#2563EB;margin-left:12px">$${sub.toFixed(2)}</span>
+      <button class="rm-btn" onclick="removeFromCart('${k}')" title="Remove">×</button>
+    </div>`;
+  }).join('');
+  document.getElementById('cart-total').textContent='$'+total.toFixed(2);
+  summary.style.display='block';
+}
+
+function handleSubmit(e){
+  if(e)e.preventDefault();
+  const ok=document.getElementById('sub-ok');
+  ok.style.display='block';
+  setTimeout(()=>ok.style.display='none',5000);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goto(id){
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+
+renderTiers();
+renderCart();
+</script>
+</body>
+</html>
