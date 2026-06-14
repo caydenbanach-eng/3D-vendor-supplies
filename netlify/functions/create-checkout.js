@@ -1,4 +1,3 @@
-
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
@@ -23,6 +22,7 @@ exports.handler = async (event) => {
       line_items: lineItems,
       mode: 'payment',
       shipping_address_collection: { allowed_countries: ['US'] },
+      shipping_options: [{ shipping_rate: 'shr_1Ti31xIGZMTFGeigIW7xRwIr' }],
       success_url: `${origin}?success=true`,
       cancel_url: `${origin}?cancelled=true`,
     });
