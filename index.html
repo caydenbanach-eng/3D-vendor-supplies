@@ -177,6 +177,7 @@ footer{background:var(--navy);padding:28px 32px;display:flex;justify-content:spa
         <p class="product-desc">Custom 3D printed card risers designed to elevate and display your Pokémon cards at vendor events. Sturdy, stackable, and available in any color. Perfect for table displays.</p>
         <p class="tier-label">Select your package</p>
         <div class="tier-grid" id="tier-grid"></div>
+        <p style="font-size:11px;color:#64748b;margin-bottom:16px;line-height:1.6">💡 Need a custom quantity? Select the closest package — you can adjust the quantity on the checkout page. Mix packages across separate orders for exact counts.</p>
         <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
       </div>
     </div>
@@ -340,10 +341,31 @@ let cart={};
 async function stripeCheckout(){
   const keys=Object.keys(cart);
   if(!keys.length)return;
-  // Find the highest tier in cart and send to that payment link
-  const tierIds=keys.map(k=>cart[k].tier.id);
-  const highestTier=Math.max(...tierIds);
-  window.location.href=STRIPE_LINKS[highestTier];
+  const btn=document.querySelector('.checkout-btn');
+  btn.textContent='Loading...';
+  btn.disabled=true;
+  try{
+    const items=keys.map(k=>({
+      name:'Display Card Risers — '+(cart[k].tier.id===4?'Mega Package (16)':cart[k].tier.qty===1?'1 Riser':cart[k].tier.qty+' Risers'),
+      price:cart[k].tier.price,
+      qty:cart[k].qty,
+    }));
+    const res=await fetch('/.netlify/functions/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items,origin:window.location.origin}),
+    });
+    const data=await res.json();
+    if(data.url){
+      window.location.href=data.url;
+    }else{
+      throw new Error(data.error||'Unknown error');
+    }
+  }catch(err){
+    alert('Checkout error: '+err.message);
+    btn.textContent='Proceed to Checkout →';
+    btn.disabled=false;
+  }
 }
 
 function setPhoto(el){
